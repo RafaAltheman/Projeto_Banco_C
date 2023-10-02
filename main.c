@@ -2,6 +2,9 @@
 #include "projfunc.h"
 
 int main(){
+
+    listadeclientes c;
+    c.qtd = 0;
     
     while (1){
         int opcao;
@@ -20,7 +23,7 @@ int main(){
         scanf("%d", &opcao);
 
         if (opcao==1){
-
+            criarcliente(&c);
         } else if (opcao==2){
 
         } else if (opcao==3){
@@ -39,5 +42,4 @@ int main(){
             break;
         }
     }
-    return 0;
 }
