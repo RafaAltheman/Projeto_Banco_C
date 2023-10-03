@@ -25,7 +25,7 @@ int main(){
         if (opcao==1){
             criarcliente(&c);
         } else if (opcao==2){
-
+            apagacliente(&c);
         } else if (opcao==3){
 
         } else if (opcao==4){

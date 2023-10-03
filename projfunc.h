@@ -1,9 +1,9 @@
 typedef struct{
-    char nome;
-    char cpf;
-    char tipoconta;
-    float valori;
-    char senha;
+    char nome[100];
+    char cpf[12];
+    char tipoconta[30];
+    double valori;
+    char senha[20];
 }cliente;
 
 typedef struct {
@@ -11,8 +11,9 @@ typedef struct {
     int qtd;
 } listadeclientes;
 
+void clearbuffer();
 int criarcliente(listadeclientes *c);
-int apagacliente(listadeclientes *c);
+int apagacliente(listadeclientes *c,const char *cpf);
 int listacliente(listadeclientes *c);
 int debitacliente(listadeclientes *c);
 int depositacliente(listadeclientes *c);
