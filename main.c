@@ -25,10 +25,12 @@ int main(){
         if (opcao==1){
             criarcliente(&c);
         } else if (opcao==2){
-            apagacliente(&c);
+            char cpf[12];
+            apagacliente(&c,cpf);
         } else if (opcao==3){
-
+            listacliente(c);
         } else if (opcao==4){
+
 
         } else if (opcao==5){
 

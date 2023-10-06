@@ -14,7 +14,7 @@ typedef struct {
 void clearbuffer();
 int criarcliente(listadeclientes *c);
 int apagacliente(listadeclientes *c,const char *cpf);
-int listacliente(listadeclientes *c);
+int listacliente(listadeclientes c);
 int debitacliente(listadeclientes *c);
 int depositacliente(listadeclientes *c);
 int extrato(listadeclientes *c);
