@@ -19,3 +19,5 @@ int debitacliente(listadeclientes *c);
 int depositacliente(listadeclientes *c);
 int extrato(listadeclientes *c);
 int transferencia(listadeclientes *c);
+int salvar(listadeclientes *c, char nome[]);
+int carregarlista(listadeclientes *c, char nome[]);
