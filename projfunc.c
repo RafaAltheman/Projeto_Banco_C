@@ -1,5 +1,6 @@
 #include "projfunc.h"
 #include <stdio.h>
+#include <string.h>
 
 void clearbuffer(){
    int c;
@@ -19,7 +20,7 @@ int criarcliente(listadeclientes *c){
         scanf("%[^\n]s", c->clientes[c->qtd].tipoconta);
         clearbuffer();
         printf("Valor inicial: ");
-        scanf("%.2lf", &c->clientes[c->qtd].valori);
+        scanf("%2lf", &c->clientes[c->qtd].valori);
         clearbuffer();
         printf("Senha: ");
         scanf("%[^\n]s", c->clientes[c->qtd].senha);
@@ -35,30 +36,26 @@ int criarcliente(listadeclientes *c){
 
 int apagacliente(listadeclientes *c, const char *cpf){
    int escolhido = 0;
-   int x,y;
+   char cpf_deletar[12];
    clearbuffer();
    printf("Digite o CPF que deseja deletar: ");
-   scanf("%d", &escolhido);
+   scanf("%s", cpf_deletar);
    clearbuffer();
-   for (int i = 0; i < c -> qtd; i++){
-      for(int x = 0; c -> clientes[i].cpf[x] != '\0' && cpf[x] != '\0'; x++){
-         if(c -> clientes[i].cpf[x] != cpf[x]){
-            break; // cpf diferente ele nâo realiza a operaçâo
-         }
-      }
-      if (c -> clientes[i].cpf[x] == '\0' && cpf[x] == '\0'){
+   for (int i = 0; i < c->qtd; i++) {
+      if (strcmp(c->clientes[i].cpf, cpf) == 0) {
          escolhido = 1;
-         for (int y = i; y < c-> qtd - 1; y++){
-            c -> clientes[y] = c -> clientes[y+1];
+         if (i < c-> qtd -1){
+            c -> clientes[i] = c -> clientes[c->qtd -1];
          }
-         c -> qtd--;
-         printf("O cliente foi removido com sucesso!");
+         c->qtd--;
+         printf("O cliente foi removido com sucesso!\n");
          break;
       }
    }
-   if (!escolhido){
-      printf("Cliente nâo encontrado. CPF inexistente");
+   if (!escolhido) {
+      printf("Cliente não encontrado. CPF inexistente.\n");
    }
+
    return 0;
 }
 
@@ -104,9 +101,8 @@ int debitacliente(listadeclientes *c){
          printf("CPF do destinatário: ");
          scanf("%[^\n]s", c->clientes[c->qtd].cpf);
          clearbuffer();
-         if()
          printf("Valor a ser debitado: ");
-         scanf("%.3f", &valordebito);
+         scanf("%3f", &valordebito);
          
 
       }
@@ -136,4 +132,3 @@ int carregarlista(listadeclientes *c, char nome[]){
     fclose(f); 
     return 0;
 }
-

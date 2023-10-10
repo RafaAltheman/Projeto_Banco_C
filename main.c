@@ -1,10 +1,16 @@
 #include <stdio.h>
+#include <string.h>
 #include "projfunc.h"
 
 int main(){
 
     listadeclientes c;
     c.qtd = 0;
+
+    int cod;
+    char arquivo[] = "arquivo";
+
+    carregarlista(&c, "arquivo.txt");
     
     while (1){
         int opcao;
@@ -38,10 +44,12 @@ int main(){
 
         } else if (opcao==7){
 
-        } else if (opcao==8){
-
-        } else {
+        } else if (opcao==0){
+            salvar(&c, "arquivo.txt");
             break;
-        }
+    } 
     }
+    cod = salvar(&c,arquivo); //Salva as informações na lista
+    if (cod !=0) //Se o "return" for diferente de zero, a tarefa não é cadastrada
+        printf("Erro ao cadastrar os clientes!");
 }
