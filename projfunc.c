@@ -40,23 +40,17 @@ int apagacliente(listadeclientes *c, const char *cpf){
    clearbuffer();
    printf("Digite o CPF que deseja deletar: ");
    scanf("%s", cpf_deletar);
-   clearbuffer();
-   for (int i = 0; i < c->qtd; i++) {
-      if (strcmp(c->clientes[i].cpf, cpf) == 0) {
-         escolhido = 1;
-         if (i < c-> qtd -1){
-            c -> clientes[i] = c -> clientes[c->qtd -1];
-         }
-         c->qtd--;
-         printf("O cliente foi removido com sucesso!\n");
-         break;
-      }
-   }
-   if (!escolhido) {
-      printf("Cliente não encontrado. CPF inexistente.\n");
-   }
+   int indice = buscacpfdeletar(c, cpf_deletar);
 
-   return 0;
+    if (indice != -1) {
+        for (int i = indice; i < c->qtd - 1; i++) {
+            c->clientes[i] = c->clientes[i + 1];
+        }
+        c->qtd--; 
+        printf("Cliente com CPF %s apagado com sucesso.\n", cpf_deletar);
+    } else {
+        printf("CPF %s não encontrado na lista de clientes.\n", cpf_deletar);
+    }
 }
 
 int listacliente(listadeclientes c){
@@ -65,10 +59,10 @@ int listacliente(listadeclientes c){
     } else {
         printf("Lista de Clientes:\n");
         for (int i = 0; i < c.qtd; i++) {
-            printf("Nome %s:\n", c.clientes[i].nome);
+            printf("Nome: %s\n", c.clientes[i].nome);
             printf("CPF: %s\n", c.clientes[i].cpf); 
             printf("Tipo de conta: %s\n", c.clientes[i].tipoconta); 
-            printf("Valor inicial: %lf\n", c.clientes[i].valori); 
+            printf("Valor inicial: %.2lf\n", c.clientes[i].valori); 
             printf("Senha: %s\n", c.clientes[i].senha);
             printf("\n"); 
         }
@@ -77,39 +71,60 @@ int listacliente(listadeclientes c){
 }
 
 int debitacliente(listadeclientes *c){
-   char cpfdestinatario[12];
-   float valordebito;
-   clearbuffer();
-   printf("CPF: ");
-   scanf("%[^\n]s", c->clientes[c->qtd].cpf);
-   clearbuffer();
-   printf("Senha: ");
-   scanf("%[^\n]s", c->clientes[c->qtd].senha);
-   clearbuffer();
-   printf("CPF do Destinatário: ");
-   scanf("%[^\n]s",cpfdestinatario);
-   clearbuffer();
-   for(int i=0; i<c->qtd; i++){
-      int j;
-      for(j=0; c->clientes[i].cpf[j] !='\0' && c->clientes[i].cpf[j]!='\0'; j++){
-         if(c->clientes[i].cpf[j] != c->clientes[i].cpf[j]){
-            break;
-         }
-      }
-      if(c->clientes[i].cpf[j] == '\0' && c->clientes[i].cpf[j] == '\0'){
-         clearbuffer();
-         printf("CPF do destinatário: ");
-         scanf("%[^\n]s", c->clientes[c->qtd].cpf);
-         clearbuffer();
-         printf("Valor a ser debitado: ");
-         scanf("%3f", &valordebito);
-         
+   char senha_verificar[20];
+   char cpf_verificar[12];
+   float valor_debitado;
 
+   clearbuffer();
+   printf("Digite o CPF: ");
+   scanf("%s", cpf_verificar);
+   clearbuffer();
+   printf("Digite a senha: ");
+   scanf("%s", senha_verificar);
+   
+   int cpfencontrado = buscacpf(c, cpf_verificar);
+
+   if(cpfencontrado != -1 && strcmp(c->clientes[cpfencontrado].senha, senha_verificar)==0){
+      printf("Usuário localizado! Digite o valor a ser debitado: ");
+      scanf("%f", &valor_debitado);
+         if(c->clientes[cpfencontrado].valori >= valor_debitado){
+            c->clientes[cpfencontrado].valori -= valor_debitado;
+            printf("Debito realizado com sucesso!\n");
+         }
+         else{
+            printf("Saldo insuficiente para realizar a transação\n");
+         }
+      }else{
+         printf("CPF ou senha incorretos!\n");
       }
-   }
 }
 
-/////////////////////////////////////////////////
+int depositacliente(listadeclientes *c){
+   char cpf_verificar[12];
+   double valor;
+
+   clearbuffer();
+   printf("Digite o CPF: ");
+   scanf("%s", cpf_verificar);
+   
+   int cpfencontrado = buscacpf(c, cpf_verificar);
+
+   if(cpfencontrado != -1){
+      printf("Usuário localizado! Digite o valor a ser depositado: ");
+      scanf("%lf", &valor);
+         if(valor > 0){
+            c->clientes[cpfencontrado].valori += valor;
+            printf("Deposito realizado com sucesso!\n");
+         } else {
+            printf("Digite um valor maior que 0.");
+         }
+      }else{
+         printf("CPF incorretos!\n");
+      }
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
 
 int salvar(listadeclientes *c, char nome[]){
    FILE *f = fopen(nome, "wb");
@@ -131,4 +146,34 @@ int carregarlista(listadeclientes *c, char nome[]){
     fread(c, sizeof(listadeclientes), 1, f);
     fclose(f); 
     return 0;
+}
+
+int buscacpfdeletar(listadeclientes *c, char cpf_deletar[]){
+   int encontrado = 0;
+    for (int i = 0; i < c->qtd; i++) {
+        if (strcmp(c->clientes[i].cpf, cpf_deletar) == 0) {
+            return i;
+     }
+    }
+   return -1;
+}
+
+int achasenha(listadeclientes *c, char senha_verificar[]){
+   int encontrado = 0;
+    for (int i = 0; i < c->qtd; i++) {
+        if (strcmp(c->clientes[i].senha, senha_verificar) == 0) {
+            return i;
+     }
+    }
+   return -1;
+}
+
+int buscacpf(listadeclientes *c, char cpf_verificar[]){
+   int encontrado = 0;
+    for (int i = 0; i < c->qtd; i++) {
+        if (strcmp(c->clientes[i].cpf, cpf_verificar) == 0) {
+            return i;
+     }
+    }
+   return -1;
 }

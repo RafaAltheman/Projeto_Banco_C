@@ -36,10 +36,9 @@ int main(){
         } else if (opcao==3){
             listacliente(c);
         } else if (opcao==4){
-
-
+            debitacliente(&c);
         } else if (opcao==5){
-
+            depositacliente(&c);
         } else if (opcao==6){
 
         } else if (opcao==7){
@@ -50,6 +49,6 @@ int main(){
     } 
     }
     cod = salvar(&c,arquivo); //Salva as informações na lista
-    if (cod !=0) //Se o "return" for diferente de zero, a tarefa não é cadastrada
+    if (cod !=0) //Se o "return" for diferente de zero, o cliente não é cadastrada
         printf("Erro ao cadastrar os clientes!");
 }

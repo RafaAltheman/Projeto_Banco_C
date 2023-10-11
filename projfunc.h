@@ -21,3 +21,6 @@ int extrato(listadeclientes *c);
 int transferencia(listadeclientes *c);
 int salvar(listadeclientes *c, char nome[]);
 int carregarlista(listadeclientes *c, char nome[]);
+int buscacpfdeletar(listadeclientes *c, char cpf_deletar[]);
+int achasenha(listadeclientes *c, char senha[]);
+int buscacpf(listadeclientes *c, char cpf_verificar[]);
