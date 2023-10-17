@@ -62,7 +62,7 @@ int listacliente(listadeclientes c){
             printf("Nome: %s\n", c.clientes[i].nome);
             printf("CPF: %s\n", c.clientes[i].cpf); 
             printf("Tipo de conta: %s\n", c.clientes[i].tipoconta); 
-            printf("Valor inicial: %.2lf\n", c.clientes[i].valori); 
+            printf("Valor: %.2lf\n", c.clientes[i].valori); 
             printf("Senha: %s\n", c.clientes[i].senha);
             printf("\n"); 
         }
@@ -87,14 +87,29 @@ int debitacliente(listadeclientes *c){
    if(cpfencontrado != -1 && strcmp(c->clientes[cpfencontrado].senha, senha_verificar)==0){
       printf("Usuário localizado! Digite o valor a ser debitado: ");
       scanf("%f", &valor_debitado);
+      if(strcmp(c->clientes[cpfencontrado].tipoconta , "comum")==0){
          if(c->clientes[cpfencontrado].valori >= valor_debitado){
-            c->clientes[cpfencontrado].valori -= valor_debitado;
+            float taxa = valor_debitado * 0.05;
+            if(c->clientes[cpfencontrado].valori - valor_debitado - taxa >= -1000){
+               c->clientes[cpfencontrado].valori -= valor_debitado;
+               c->clientes[cpfencontrado].valori -= taxa;
             printf("Debito realizado com sucesso!\n");
-         }
-         else{
+            }
+         }else {
             printf("Saldo insuficiente para realizar a transação\n");
          }
-      }else{
+      }else if (strcmp(c->clientes[cpfencontrado].tipoconta, "plus")==0){
+         float taxa = valor_debitado * 0.03;
+         if(c->clientes[cpfencontrado].valori - valor_debitado - taxa >= -5000){
+            c->clientes[cpfencontrado].valori -= valor_debitado;
+            c->clientes[cpfencontrado].valori -= taxa;
+            printf("Debito realizado com sucesso!\n");
+         }else{
+            printf("Saldo insuficiente para realizar a transação\n");
+         }
+      }
+      }
+   else{
          printf("CPF ou senha incorretos!\n");
       }
 }
@@ -121,10 +136,35 @@ int depositacliente(listadeclientes *c){
       }else{
          printf("CPF incorretos!\n");
       }
+}
+
+int extrato(listadeclientes *c){
+   
+}
+
+int transferencia(listadeclientes *c){
+   char senha_verificar[20];
+   char cpf_verificar[12];
+   char cpf_destino[12];
+   float valor_transferencia;
+
+   clearbuffer();
+   printf("Digite o CPF de origem: ");
+   scanf("%s", cpf_verificar);
+   clearbuffer();
+   printf("Digite a senha: ");
+   scanf("%s", senha_verificar);
+   clearbuffer();
+   printf("Digite o CPF do destinatário: ");
+   scanf("%s", cpf_destino);
+
+   int cpfencontrado = buscacpf(c, cpf_verificar);
+   int cpfdestino = buscacpf2(c, cpf_destino);
+
 
 }
 
-///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 int salvar(listadeclientes *c, char nome[]){
    FILE *f = fopen(nome, "wb");
@@ -177,3 +217,14 @@ int buscacpf(listadeclientes *c, char cpf_verificar[]){
     }
    return -1;
 }
+
+int buscacpfdestino(listadeclientes *c, char cpf_destino[]){
+   int encontrado = 0;
+    for (int i = 0; i < c->qtd; i++) {
+        if (strcmp(c->clientes[i].cpf, cpf_destino) == 0) {
+            return i;
+     }
+    }
+   return -1;
+}
+
