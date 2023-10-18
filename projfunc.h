@@ -17,7 +17,7 @@ int apagacliente(listadeclientes *c,const char *cpf);
 int listacliente(listadeclientes c);
 int debitacliente(listadeclientes *c);
 int depositacliente(listadeclientes *c);
-int extrato(listadeclientes *c);
+int extrato(listadeclientes *c, char nome[]);
 int transferencia(listadeclientes *c);
 int salvar(listadeclientes *c, char nome[]);
 int carregarlista(listadeclientes *c, char nome[]);
