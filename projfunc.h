@@ -24,3 +24,4 @@ int carregarlista(listadeclientes *c, char nome[]);
 int buscacpfdeletar(listadeclientes *c, char cpf_deletar[]);
 int achasenha(listadeclientes *c, char senha[]);
 int buscacpf(listadeclientes *c, char cpf_verificar[]);
+int buscacpfdestino(listadeclientes *c, char cpf_destino[]);

@@ -20,7 +20,7 @@ int criarcliente(listadeclientes *c){
         scanf("%[^\n]s", c->clientes[c->qtd].tipoconta);
         clearbuffer();
         printf("Valor inicial: ");
-        scanf("%2lf", &c->clientes[c->qtd].valori);
+        scanf("%lf", &c->clientes[c->qtd].valori);
         clearbuffer();
         printf("Senha: ");
         scanf("%[^\n]s", c->clientes[c->qtd].senha);
@@ -62,7 +62,7 @@ int listacliente(listadeclientes c){
             printf("Nome: %s\n", c.clientes[i].nome);
             printf("CPF: %s\n", c.clientes[i].cpf); 
             printf("Tipo de conta: %s\n", c.clientes[i].tipoconta); 
-            printf("Valor: %.2lf\n", c.clientes[i].valori); 
+            printf("Valor: %lf\n", c.clientes[i].valori); 
             printf("Senha: %s\n", c.clientes[i].senha);
             printf("\n"); 
         }
@@ -159,7 +159,9 @@ int transferencia(listadeclientes *c){
    scanf("%s", cpf_destino);
 
    int cpfencontrado = buscacpf(c, cpf_verificar);
-   int cpfdestino = buscacpf2(c, cpf_destino);
+   int cpfdestino = buscacpfdestino(c, cpf_destino);
+
+
 
 
 }
