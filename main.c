@@ -42,7 +42,7 @@ int main(){
         } else if (opcao==6){
 
         } else if (opcao==7){
-
+            transferencia(&c);
         } else if (opcao==0){
             salvar(&c, "arquivo.txt");
             break;

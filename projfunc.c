@@ -138,9 +138,38 @@ int depositacliente(listadeclientes *c){
       }
 }
 
-int extrato(listadeclientes *c){
+int extrato(listadeclientes *c, char nome[]){
+   char senha_verificar[20];
+   char cpf_verificar[12];
+
+   clearbuffer();
+   printf("Digite o CPF: ");
+   scanf("%s", cpf_verificar);
+   clearbuffer();
+   printf("Digite a senha: ");
+   scanf("%s", senha_verificar);
    
-}
+   int cpfencontrado = buscacpf(c, cpf_verificar);
+
+   if(cpfencontrado != -1 && strcmp(c->clientes[cpfencontrado].senha, senha_verificar)==0){
+      char nome[30];
+      for(int i = 0; cpf_verificar[i] != '\0'; i++){
+         nome[i] = cpf_verificar[i];
+      }
+
+      FILE *f = fopen(nome, "wb");
+        if (f == NULL) {
+            printf("Erro ao criar o arquivo de extrato.\n");
+            return;
+        }
+        fprintf(f, "Extrato para &s:\n", c->clientes[cpfencontrado].nome);
+        fprintf(f, "Operações feitas pela conta!\n");
+
+        //for (int i = 0; i < c->clientes[cpfencontrado].historico.qtd; i++){
+//
+//        }
+   }
+
 
 int transferencia(listadeclientes *c){
    char senha_verificar[20];
@@ -161,9 +190,33 @@ int transferencia(listadeclientes *c){
    int cpfencontrado = buscacpf(c, cpf_verificar);
    int cpfdestino = buscacpfdestino(c, cpf_destino);
 
-
-
-
+   if(cpfencontrado != -1 && strcmp(c->clientes[cpfencontrado].senha, senha_verificar)==0 && cpfdestino != -1){
+      printf("Usuários localizados! Digite o valor a ser transferido: ");
+      scanf("%f", &valor_transferencia);
+      if(strcmp(c->clientes[cpfencontrado].tipoconta , "comum")==0){
+         float taxa = valor_transferencia * 0.05;
+         if(c->clientes[cpfencontrado].valori - valor_transferencia - taxa >= -1000){
+            c->clientes[cpfencontrado].valori -= valor_transferencia;
+            c->clientes[cpfencontrado].valori -= taxa;
+            c->clientes[cpfdestino].valori += valor_transferencia;
+            printf("Transferência realizada com sucesso!\n");
+         }else {
+            printf("Saldo insuficiente para realizar a transação\n");
+         }
+      } else if (strcmp(c->clientes[cpfencontrado].tipoconta, "plus")==0){
+         float taxa = valor_transferencia * 0.03;
+         if(c->clientes[cpfencontrado].valori - valor_transferencia - taxa >= -5000){
+            c->clientes[cpfencontrado].valori -= valor_transferencia;
+            c->clientes[cpfencontrado].valori -= taxa;
+            c->clientes[cpfdestino].valori += valor_transferencia;
+            printf("Transferência realizada com sucesso!\n");
+         }else {
+            printf("Saldo insuficiente para realizar a transação\n");
+         }
+      }
+   } else {
+      printf("Usuário não encontrado!");
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
