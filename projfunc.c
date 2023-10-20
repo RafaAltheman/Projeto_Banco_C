@@ -141,6 +141,7 @@ int depositacliente(listadeclientes *c){
 int extrato(listadeclientes *c, char nome[]){
    char senha_verificar[20];
    char cpf_verificar[12];
+   float valor_transferencia;
 
    clearbuffer();
    printf("Digite o CPF: ");
@@ -152,23 +153,37 @@ int extrato(listadeclientes *c, char nome[]){
    int cpfencontrado = buscacpf(c, cpf_verificar);
 
    if(cpfencontrado != -1 && strcmp(c->clientes[cpfencontrado].senha, senha_verificar)==0){
-      char nome[30];
-      for(int i = 0; cpf_verificar[i] != '\0'; i++){
-         nome[i] = cpf_verificar[i];
-      }
 
       FILE *f = fopen(nome, "wb");
         if (f == NULL) {
             printf("Erro ao criar o arquivo de extrato.\n");
-            return;
+            return 1;
         }
-        fprintf(f, "Extrato para &s:\n", c->clientes[cpfencontrado].nome);
-        fprintf(f, "Operações feitas pela conta!\n");
+        fprintf(f, "Extrato para %s:\n", c->clientes[cpfencontrado].nome);
+        fprintf(f, "Operação: \n");
 
-        //for (int i = 0; i < c->clientes[cpfencontrado].historico.qtd; i++){
-//
-//        }
+
+      fclose(f);
+      printf("Extrato salvo com sucesso em %s!\n", nome);
+        return 0;
+    } else {
+        printf("CPF ou senha incorretos.\n");
+        return 1;
+      
    }
+   int resultado = encontraextrato(&c->clientes[cpfencontrado], "Descrição da transação: ", valor_transferencia, "Tipo de Operação", c->clientes[cpfencontrado].nome, c->clientes[cpfencontrado].cpf);
+
+
+    if (resultado == 0) {
+        printf("Transação registrada!\n");
+    } else if (resultado == 1) {
+        printf("Limite de operações atingido.\n");
+    } else if (resultado == 2) {
+        printf("Erro ao registrar a transação no extrato.\n");
+    }
+}
+
+
 
 
 int transferencia(listadeclientes *c){
@@ -281,5 +296,34 @@ int buscacpfdestino(listadeclientes *c, char cpf_destino[]){
      }
     }
    return -1;
+}
+
+int encontraextrato(cliente *c, const char *descricao, double valor, const char *tipo_operacao, const char *nome, const char *cpf){
+    char transacao[200];
+    if (c->quantidadeop >= 100) {
+        return 1;
+    }
+    int local = c->quantidadeop;
+    if (local >= 100) {
+        return 1;}
+   snprintf(c->operacoes[local].descricao, sizeof(c->operacoes[local].descricao), "%s", descricao);
+    c->operacoes[local].valor = valor;
+    c->operacoes[local].taxa = 0.0;
+
+   
+    int z = sprintf(transacao, "Tipo de Operação: %s | Descrição: %s | Valor: %.2lf | Nome: %s | CPF: %s\n", tipo_operacao, descricao, valor, nome, cpf);
+    if (z <= 0) {
+        return 2;
+    }
+    int local = 0;
+    while (cliente *c->operacoes[local] != '\0') {
+        local++;
+    }
+
+    for (int i = 0; i < z; i++) {
+        c->operacoes[local + i] = transacao[i];
+    }
+    c->quantidadeop++;
+    return 0;
 }
 

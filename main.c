@@ -40,7 +40,7 @@ int main(){
         } else if (opcao==5){
             depositacliente(&c);
         } else if (opcao==6){
-
+            extrato(&c, "arquivoextrato.txt");
         } else if (opcao==7){
             transferencia(&c);
         } else if (opcao==0){
