@@ -93,6 +93,7 @@ int debitacliente(listadeclientes *c){
             if(c->clientes[cpfencontrado].valori - valor_debitado - taxa >= -1000){
                c->clientes[cpfencontrado].valori -= valor_debitado;
                c->clientes[cpfencontrado].valori -= taxa;
+               modificaextrato(valor_debitado,taxa,"Débito", &c->clientes[cpfencontrado]);
             printf("Debito realizado com sucesso!\n");
             }
          }else {
@@ -103,6 +104,7 @@ int debitacliente(listadeclientes *c){
          if(c->clientes[cpfencontrado].valori - valor_debitado - taxa >= -5000){
             c->clientes[cpfencontrado].valori -= valor_debitado;
             c->clientes[cpfencontrado].valori -= taxa;
+            modificaextrato(valor_debitado,taxa,"Débito", &c->clientes[cpfencontrado]);
             printf("Debito realizado com sucesso!\n");
          }else{
             printf("Saldo insuficiente para realizar a transação\n");
@@ -129,6 +131,7 @@ int depositacliente(listadeclientes *c){
       scanf("%lf", &valor);
          if(valor > 0){
             c->clientes[cpfencontrado].valori += valor;
+            modificaextrato(valor,0,"Deposito", &c->clientes[cpfencontrado]);
             printf("Deposito realizado com sucesso!\n");
          } else {
             printf("Digite um valor maior que 0.");
@@ -152,39 +155,14 @@ int extrato(listadeclientes *c, char nome[]){
    
    int cpfencontrado = buscacpf(c, cpf_verificar);
 
-   if(cpfencontrado != -1 && strcmp(c->clientes[cpfencontrado].senha, senha_verificar)==0){
+   if (cpfencontrado != -1 && strcmp(c->clientes[cpfencontrado].senha, senha_verificar)==0){
+      gerarextrato(c->clientes[cpfencontrado]);
 
-      FILE *f = fopen(nome, "wb");
-        if (f == NULL) {
-            printf("Erro ao criar o arquivo de extrato.\n");
-            return 1;
-        }
-        fprintf(f, "Extrato para %s:\n", c->clientes[cpfencontrado].nome);
-        fprintf(f, "Operação: \n");
-
-
-      fclose(f);
-      printf("Extrato salvo com sucesso em %s!\n", nome);
-        return 0;
-    } else {
-        printf("CPF ou senha incorretos.\n");
-        return 1;
-      
    }
-   int resultado = encontraextrato(&c->clientes[cpfencontrado], "Descrição da transação: ", valor_transferencia, "Tipo de Operação", c->clientes[cpfencontrado].nome, c->clientes[cpfencontrado].cpf);
-
-
-    if (resultado == 0) {
-        printf("Transação registrada!\n");
-    } else if (resultado == 1) {
-        printf("Limite de operações atingido.\n");
-    } else if (resultado == 2) {
-        printf("Erro ao registrar a transação no extrato.\n");
-    }
+   else{
+      printf("CPF ou senha errado!");
+   }
 }
-
-
-
 
 int transferencia(listadeclientes *c){
    char senha_verificar[20];
@@ -214,6 +192,7 @@ int transferencia(listadeclientes *c){
             c->clientes[cpfencontrado].valori -= valor_transferencia;
             c->clientes[cpfencontrado].valori -= taxa;
             c->clientes[cpfdestino].valori += valor_transferencia;
+            modificaextrato(valor_transferencia,taxa,"Tranferência", &c->clientes[cpfencontrado]);
             printf("Transferência realizada com sucesso!\n");
          }else {
             printf("Saldo insuficiente para realizar a transação\n");
@@ -224,13 +203,14 @@ int transferencia(listadeclientes *c){
             c->clientes[cpfencontrado].valori -= valor_transferencia;
             c->clientes[cpfencontrado].valori -= taxa;
             c->clientes[cpfdestino].valori += valor_transferencia;
+            modificaextrato(valor_transferencia,taxa,"Tranferência", &c->clientes[cpfdestino]);
             printf("Transferência realizada com sucesso!\n");
          }else {
             printf("Saldo insuficiente para realizar a transação\n");
          }
       }
    } else {
-      printf("Usuário não encontrado!");
+      printf("Usuário não encontrado!\n");
    }
 }
 
@@ -298,32 +278,28 @@ int buscacpfdestino(listadeclientes *c, char cpf_destino[]){
    return -1;
 }
 
-int encontraextrato(cliente *c, const char *descricao, double valor, const char *tipo_operacao, const char *nome, const char *cpf){
-    char transacao[200];
-    if (c->quantidadeop >= 100) {
-        return 1;
-    }
-    int local = c->quantidadeop;
-    if (local >= 100) {
-        return 1;}
-   snprintf(c->operacoes[local].descricao, sizeof(c->operacoes[local].descricao), "%s", descricao);
-    c->operacoes[local].valor = valor;
-    c->operacoes[local].taxa = 0.0;
-
+int gerarextrato(cliente c){
+   FILE *f = fopen("extrato.txt", "w");
    
-    int z = sprintf(transacao, "Tipo de Operação: %s | Descrição: %s | Valor: %.2lf | Nome: %s | CPF: %s\n", tipo_operacao, descricao, valor, nome, cpf);
-    if (z <= 0) {
-        return 2;
-    }
-    int local = 0;
-    while (cliente *c->operacoes[local] != '\0') {
-        local++;
-    }
+   for(int i=0; c.quantidadeop > i; i++){
+      fprintf(f,"Descrição: %s\n", c.operacoes[i].descricao);
+      fprintf(f,"Valor: %lf\n", c.operacoes[i].valor);
+      fprintf(f,"Taxa: %lf\n", c.operacoes[i].taxa);
+      fprintf(f,"\n");
+   }
 
-    for (int i = 0; i < z; i++) {
-        c->operacoes[local + i] = transacao[i];
-    }
-    c->quantidadeop++;
-    return 0;
+   fclose(f);
+   return 0;
 }
 
+int modificaextrato(double valor, double taxa, char descricao[], cliente *c){
+   if (c->quantidadeop > 99){
+      for(int i=0; i < c->quantidadeop - 1; i++){
+         c->operacoes[i] = c->operacoes[ i + 1 ];
+      }
+   }
+   c->operacoes[c->quantidadeop].valor = valor;
+   c->operacoes[c->quantidadeop].taxa = taxa;
+   strcpy(c->operacoes[c->quantidadeop].descricao, descricao);
+   c->quantidadeop++;
+}
