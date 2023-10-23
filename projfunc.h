@@ -19,9 +19,6 @@ typedef struct {
     int qtd;
 } listadeclientes;
 
-
-
-
 void clearbuffer();
 int criarcliente(listadeclientes *c);
 int apagacliente(listadeclientes *c,const char *cpf);
@@ -36,4 +33,5 @@ int buscacpfdeletar(listadeclientes *c, char cpf_deletar[]);
 int achasenha(listadeclientes *c, char senha[]);
 int buscacpf(listadeclientes *c, char cpf_verificar[]);
 int buscacpfdestino(listadeclientes *c, char cpf_destino[]);
-int encontraextrato(cliente *c, const char *descricao, double valor, const char *tipo_operacao, const char *nome, const char *cpf);
+int gerarextrato(cliente c);
+int modificaextrato(double valor, double taxa, char descricao[], cliente *c);
