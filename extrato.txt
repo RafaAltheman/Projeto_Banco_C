@@ -2,3 +2,11 @@ Descrição: Tranferência
 Valor: 200.000000
 Taxa: 6.000000
 
+Descrição: Débito
+Valor: 200.000000
+Taxa: 6.000000
+
+Descrição: Deposito
+Valor: 34555.000000
+Taxa: 0.000000
+
