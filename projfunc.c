@@ -209,7 +209,6 @@ int transferencia(listadeclientes *c){ //função de transferência a partir do 
             printf("Saldo insuficiente para realizar a transação\n"); //caso o valor total ultrapasse o limite, não é realizada a transferência e aparece essa mensagem
          }
          }
-      }
    } else {
       printf("Usuário não encontrado!\n"); //caso o cpf do remetente ou sua senha ou o cpf do destinatário estiverem incorretos a transferência não é realizada e aparece essa mensagem
    }
